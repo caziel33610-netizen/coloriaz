@@ -61,6 +61,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .cat small{font-size:.9rem;font-weight:600;opacity:.75}
 .homebtn{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:var(--ring);display:grid;place-items:center;box-shadow:inset 0 -3px 0 rgb(0 0 0 / .2)}
 .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.toplogo{flex:1;min-width:0;height:48px;max-width:220px}
 .setbtn{background:#8a5cf6}
 .sndbtn{background:#2fbf5b}
 .sndbtn .off{display:none}
@@ -220,6 +221,20 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 <div class="app" id="app" hidden>
   <div class="topbar">
     <button class="homebtn" id="menubtn" aria-label="Menu (parents)"><svg viewBox="0 0 32 32"><path d="M7 10h18M7 16h18M7 22h18"/></svg></button>
+    <svg class="toplogo" viewBox="0 0 750 200" role="img" aria-label="Coloriaz">
+    <g transform="rotate(-4 375 100)" stroke="#3a2a4a" stroke-width="5" stroke-linejoin="round">
+      <path d="M60 34 H40 Q10 34 10 64 V136 Q10 166 40 166 H60 Z" fill="#ff7ac2"/>
+      <rect x="60" y="34" width="42" height="132" fill="#c9c9d2"/>
+      <path d="M74 37 V163 M88 37 V163" stroke="#7a7a86" stroke-width="4"/>
+      <rect x="102" y="34" width="510" height="132" fill="#ffd93b" stroke="none"/>
+      <rect x="104" y="36.5" width="508" height="20" fill="#fff3a0" stroke="none"/>
+      <rect x="104" y="143.5" width="508" height="20" fill="#f2b600" stroke="none"/>
+      <path d="M102 34 H612 M102 166 H612" fill="none"/>
+      <path d="M612 34 Q620 46 612 58 Q620 72 612 84 Q620 98 612 112 Q620 124 612 138 Q620 150 612 166 L732 100 Z" fill="#f4cf9c"/>
+      <path d="M688 77 Q694 100 688 123 L732 100 Z" fill="#ff5a36"/>
+      <text x="357" y="127" text-anchor="middle" font-family="Grandstander, 'Baloo 2', system-ui, sans-serif" font-size="84" font-weight="900" stroke-width="8" paint-order="stroke" stroke-linejoin="round"><tspan fill="#ff4b4b" rotate="-6">C</tspan><tspan fill="#ff9a2e" dy="4">o</tspan><tspan fill="#ff7ac2" dy="-4" rotate="4">l</tspan><tspan fill="#2fbf5b" dy="3" rotate="-3">o</tspan><tspan fill="#36c8e8" dy="-3" rotate="-4">r</tspan><tspan fill="#2f7bff" dy="4">i</tspan><tspan fill="#8a5cf6" dy="-4" rotate="4">a</tspan><tspan fill="#ff4b4b" dy="3" rotate="5">z</tspan></text>
+    </g>
+  </svg>
     <button class="homebtn saybtn" id="saybtn" aria-label="Écouter le nom du dessin"><svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></svg></button>
   </div>
   <nav class="themes" id="themes" aria-label="Choisir un thème" hidden></nav>

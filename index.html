@@ -141,7 +141,8 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .sw.prev{outline:3px dashed var(--fg);outline-offset:0}
 .sw.white[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #d8cbb5,0 0 0 3px var(--fg)}
 .sw.white{box-shadow:inset 0 0 0 2px #d8cbb5,inset 0 -5px 0 rgb(0 0 0 / .08)}
-.tools{display:flex;gap:12px;justify-content:center}
+.tools{display:flex;gap:12px;justify-content:center;flex:1}
+.topbar .tool{height:44px;width:56px}
 .tool{width:60px;height:52px;border-radius:16px;background:var(--paper);display:grid;place-items:center;
   box-shadow:0 4px 0 var(--tray-edge)}
 .tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tray-edge)}
@@ -214,6 +215,18 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 <div class="app" id="app" hidden>
   <div class="topbar">
     <button class="homebtn" id="menubtn" aria-label="Menu (parents)"><svg viewBox="0 0 32 32"><path d="M7 10h18M7 16h18M7 22h18"/></svg></button>
+  <div class="tools">
+        <button class="tool" id="undo" aria-label="Annuler">
+          <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
+        </button>
+        <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
+        <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
+          <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
+        </button>
+        <button class="tool" id="reset" aria-label="Tout effacer" hidden>
+          <svg viewBox="0 0 32 32"><path d="M6 9h20"/><path d="M12 9V6h8v3"/><path d="M8 9l2 18h12l2-18"/></svg>
+        </button>
+      </div>
     <button class="homebtn saybtn" id="saybtn" aria-label="Écouter le nom du dessin"><svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></svg></button>
   </div>
   <nav class="themes" id="themes" aria-label="Choisir un thème" hidden></nav>
@@ -238,18 +251,6 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
         </div>
         <div class="colors stickers" id="stickgrid"></div>
       </div>
-    </div>
-    <div class="tools">
-      <button class="tool" id="undo" aria-label="Annuler">
-        <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
-      </button>
-      <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
-      <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
-        <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
-      </button>
-      <button class="tool" id="reset" aria-label="Tout effacer" hidden>
-        <svg viewBox="0 0 32 32"><path d="M6 9h20"/><path d="M12 9V6h8v3"/><path d="M8 9l2 18h12l2-18"/></svg>
-      </button>
     </div>
   </section>
 </div>

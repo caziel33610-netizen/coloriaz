@@ -93,6 +93,10 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
   background:var(--ring);color:#fff;font-size:1.8rem;font-weight:800;letter-spacing:.02em;
   transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
 .bravo.show{transform:scale(1)}
+.fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.bravo::before,.bravo::after{content:"★";color:#ffd93b;margin:0 .3em}
+.bravo.show{animation:wiggle .6s ease .35s 2}
+@keyframes wiggle{25%{transform:scale(1.12) rotate(-5deg)}75%{transform:scale(1.12) rotate(5deg)}}
 
 /* Boîte de crayons */
 .tray{background:var(--tray);border-radius:22px;padding:10px;display:grid;gap:10px;
@@ -269,8 +273,12 @@ function labelize(ink){
     }
     if (!changed) break;
   }
-  const zones = []; for (let k=1;k<=n;k++) if (sizes[k] >= MIN_ZONE) zones.push(k);
-  return { label, zones };
+  /* zones du dessin : on laisse de côté le fond (ce qui touche le bord) */
+  const outside = new Set();
+  for (let i=0;i<SIZE;i++){ outside.add(label[i]); outside.add(label[N-SIZE+i]); outside.add(label[i*SIZE]); outside.add(label[i*SIZE+SIZE-1]); }
+  const zones = []; let inner = 0;
+  for (let k=1;k<=n;k++) if (sizes[k] >= MIN_ZONE && !outside.has(k)){ zones.push(k); inner += sizes[k]; }
+  return { label, zones, sizes, inner };
 }
 
 async function compose(name){
@@ -400,10 +408,58 @@ paper.addEventListener('click', async e=>{
 
 const bravo = document.getElementById('bravo'); let bravoT;
 function hideBravo(){ bravo.classList.remove('show'); }
+/* Le dessin est « fini » quand presque toute sa surface est coloriée :
+   les petites zones (yeux, reflets, détails) et le fond ne sont pas obligatoires. */
+const DONE_RATIO = 0.85;
+const wasDone = {};
+function isDone(name){
+  const st = state[name]; if (!st || !st.inner) return false;
+  const map = regionColors(name); let colored = 0;
+  for (const k of st.zones) if (map[k] && map[k] !== '#ffffff') colored += st.sizes[k];
+  return colored / st.inner >= DONE_RATIO;
+}
 function checkDone(){
-  const st = state[current]; if (!st) return;
-  const map = regionColors(current);
-  if (st.zones.every(k => map[k])){ bravo.classList.add('show'); clearTimeout(bravoT); bravoT = setTimeout(hideBravo, 2200); }
+  const done = isDone(current);
+  if (done && !wasDone[current]) celebrate();
+  wasDone[current] = done;
+}
+
+/* ---------- Fête : pluie d'étoiles ---------- */
+const fx = document.createElement('canvas'); fx.className = 'fx'; document.body.appendChild(fx);
+const FX_COLORS = ['#ff4b4b','#ff9a2e','#ffd93b','#2fbf5b','#36c8e8','#2f7bff','#8a5cf6','#ff7ac2'];
+let parts = [], fxRun = false;
+function starPath(g, r){
+  g.beginPath();
+  for (let i=0;i<10;i++){ const a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r*.45 : r; g.lineTo(Math.cos(a)*rr, Math.sin(a)*rr); }
+  g.closePath();
+}
+function celebrate(){
+  bravo.classList.add('show'); clearTimeout(bravoT); bravoT = setTimeout(hideBravo, 2600);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = paper.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+  fx.width = innerWidth*dpr; fx.height = innerHeight*dpr;
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  for (let i=0;i<70;i++){
+    const a = Math.random()*Math.PI*2, v = 4 + Math.random()*9;
+    parts.push({ x:cx, y:cy, vx:Math.cos(a)*v, vy:Math.sin(a)*v - 4, r:8 + Math.random()*14, rot:Math.random()*6, vr:(Math.random()-.5)*.3,
+      c:FX_COLORS[i % FX_COLORS.length], life:0, max:70 + Math.random()*40, star: i % 3 !== 0 });
+  }
+  if (!fxRun){ fxRun = true; requestAnimationFrame(tick); }
+}
+function tick(){
+  const g = fx.getContext('2d'), dpr = fx.width / innerWidth;
+  g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,fx.width,fx.height); g.scale(dpr,dpr);
+  parts = parts.filter(p => p.life < p.max);
+  for (const p of parts){
+    p.life++; p.vy += .22; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+    const k = 1 - p.life/p.max, scale = Math.min(1, p.life/6);
+    g.save(); g.translate(p.x,p.y); g.rotate(p.rot); g.globalAlpha = Math.min(1, k*1.6);
+    g.fillStyle = p.c;
+    if (p.star){ starPath(g, p.r*scale); g.fill(); g.lineWidth = 2; g.strokeStyle = 'rgba(43,34,51,.35)'; g.stroke(); }
+    else { g.beginPath(); g.arc(0,0,p.r*.45*scale,0,Math.PI*2); g.fill(); }
+    g.restore();
+  }
+  if (parts.length) requestAnimationFrame(tick); else { fxRun = false; g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,fx.width,fx.height); }
 }
 
 /* ---------- Boîte de crayons et motifs ---------- */

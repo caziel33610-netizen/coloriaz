@@ -296,7 +296,7 @@ function renderPicks(){
     const b = document.createElement('button');
     b.className = 'pick'; b.setAttribute('aria-label', 'dessin '+(i+1));
     b.setAttribute('aria-pressed', name===current);
-    b.innerHTML = `<img alt="" src="${IMAGES[name]}">`;
+    b.innerHTML = `<img alt="" src="${thumbs[name] || IMAGES[name]}">`;
     b.onclick = () => { current = name; renderPicks(); renderSheet(); };
     nav.appendChild(b);
   });
@@ -312,9 +312,20 @@ async function renderSheet(){
   paper.innerHTML = ''; paper.appendChild(cv);
   updateThumb();
 }
+/* miniatures coloriées : gardées en mémoire et sur le téléphone */
+let thumbs = {};
+try { thumbs = JSON.parse(localStorage.getItem('miniatures-v1') || '{}') || {}; } catch(e) { thumbs = {}; }
 function updateThumb(){
-  const b = thumbOf(current), cv = sheetCanvas(); if (!b || !cv) return;
-  const img = b.querySelector('img'); if (img) img.src = cv.toDataURL('image/png');
+  const name = current, cv = sheetCanvas(); if (!cv) return;
+  const hasWork = (fills[name] || []).length || (stickers[name] || []).length;
+  if (hasWork){
+    const t = document.createElement('canvas'); t.width = t.height = 200;
+    const g = t.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0,0,200,200); g.drawImage(cv,0,0,200,200);
+    thumbs[name] = t.toDataURL('image/jpeg', 0.85);
+  } else delete thumbs[name];
+  try { localStorage.setItem('miniatures-v1', JSON.stringify(thumbs)); } catch(e) {}
+  const b = thumbOf(name), img = b && b.querySelector('img');
+  if (img) img.src = thumbs[name] || IMAGES[name];
 }
 let thumbT;
 function afterChange(){

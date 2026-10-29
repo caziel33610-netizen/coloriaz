@@ -114,6 +114,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .sw{width:100%;max-width:44px;aspect-ratio:1;border-radius:50%;background:var(--c);
   box-shadow:inset 0 -5px 0 rgb(0 0 0 / .18),0 2px 0 rgb(0 0 0 / .15);transition:transform .15s}
 .sw[aria-pressed="true"]{box-shadow:inset 0 -5px 0 rgb(0 0 0 / .18),0 0 0 3px var(--fg)}
+.sw.prev{outline:3px dashed var(--fg);outline-offset:0}
 .sw.white[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #d8cbb5,0 0 0 3px var(--fg)}
 .sw.white{box-shadow:inset 0 0 0 2px #d8cbb5,inset 0 -5px 0 rgb(0 0 0 / .08)}
 .tools{display:flex;gap:12px;justify-content:center}
@@ -473,7 +474,7 @@ COLORS.forEach(c=>{
   const b = document.createElement('button');
   b.className = 'sw' + (c==='#ffffff' ? ' white' : '');
   b.style.setProperty('--c', c); b.dataset.c = c; b.setAttribute('aria-label','couleur '+c);
-  b.onclick = () => { color = c; motif = null; setEraser(false); };
+  b.onclick = () => { if (c !== color) prevColor = color; color = c; motif = null; setEraser(false); };
   colorsEl.appendChild(b);
 });
 const MOTIF_IDS = Object.keys(MOTIFS);
@@ -500,8 +501,12 @@ function showPanel(which){
   if (which === 'colors') motif = null;
   setEraser(false);
 }
+let prevColor = null;
 function markColor(){
-  colorsEl.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed', !eraser && !motif && b.dataset.c===color));
+  colorsEl.querySelectorAll('[data-c]').forEach(b=>{
+    b.setAttribute('aria-pressed', !eraser && !motif && b.dataset.c===color);
+    b.classList.toggle('prev', b.dataset.c===prevColor && b.dataset.c!==color);
+  });
   stickersEl.querySelectorAll('[data-m]').forEach(b=>b.setAttribute('aria-pressed', !eraser && b.dataset.m===motif));
 }
 const eraserBtn = document.getElementById('eraser');

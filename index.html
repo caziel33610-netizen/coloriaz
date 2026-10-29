@@ -60,7 +60,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .cat b{font-size:1.25rem;font-weight:800;line-height:1.1}
 .cat small{font-size:.9rem;font-weight:600;opacity:.75}
 .homebtn{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:var(--ring);display:grid;place-items:center;box-shadow:inset 0 -3px 0 rgb(0 0 0 / .2)}
-.topbar{display:flex;gap:10px;align-items:center}
+.topbar{display:flex;gap:10px;align-items:center;justify-content:space-between}
 .setbtn{background:#8a5cf6}
 .sndbtn{background:#2fbf5b}
 .sndbtn .off{display:none}
@@ -69,8 +69,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .sndbtn[aria-pressed="false"] .off{display:inline}
 .paperbox{position:relative;width:min(100cqw,100cqh);aspect-ratio:1;max-width:100%}
 .paperbox .paper{width:100%;height:100%}
-.saybtn{position:absolute;top:10px;left:10px;width:48px;height:48px;border-radius:50%;background:#36c8e8;display:grid;place-items:center;box-shadow:0 3px 0 rgb(0 0 0 / .15);z-index:2}
-.saybtn svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.saybtn{background:#36c8e8}
 .saybtn.hide{display:none}
 .homebtn svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 /* Thèmes */
@@ -155,6 +154,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .gate-close{align-self:center;padding:8px 16px;font-weight:700;opacity:.7}
 .set-list{display:flex;flex-direction:column;gap:8px}
 .set-item{min-height:52px;border-radius:14px;background:#fff3d6;font-size:1.05rem;font-weight:800;text-align:left;padding:0 16px;box-shadow:inset 0 -3px 0 var(--tray-edge)}
+.set-sep{border:0;border-top:2px dashed var(--tray-edge);margin:4px 0;width:100%}
 .set-item.danger{background:#ff4b4b;color:#fff}
 .gate-steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px;font-weight:600;line-height:1.4}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -188,16 +188,14 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 </div>
 <div class="app" id="app" hidden>
   <div class="topbar">
-    <button class="homebtn" id="homebtn" aria-label="Accueil"><svg viewBox="0 0 32 32"><path d="M5 15 16 6l11 9"/><path d="M8 13v13h16V13"/><path d="M14 26v-7h4v7"/></svg></button>
-    <button class="homebtn setbtn" id="setbtn" aria-label="Réglages (parents)"><svg viewBox="0 0 24 24" style="stroke-width:2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-    <button class="homebtn sndbtn" id="sndbtn" aria-label="Couper le son" aria-pressed="true"><svg viewBox="0 0 32 32"><g class="on"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></g><g class="off"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 12l7 8M29 12l-7 8"/></g></svg></button>
+    <button class="homebtn" id="menubtn" aria-label="Menu (parents)"><svg viewBox="0 0 32 32"><path d="M7 10h18M7 16h18M7 22h18"/></svg></button>
+    <button class="homebtn saybtn" id="saybtn" aria-label="Écouter le nom du dessin"><svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></svg></button>
   </div>
   <nav class="themes" id="themes" aria-label="Choisir un thème"></nav>
   <nav class="picks" id="picks" aria-label="Choisir un dessin"></nav>
   <main class="sheet">
     <div class="paperbox">
       <div class="paper" id="paper"></div>
-      <button class="saybtn" id="saybtn" aria-label="Écouter le nom du dessin"><svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></svg></button>
     </div>
     <div class="bravo" id="bravo" aria-live="polite">Bravo !</div>
   </main>
@@ -605,7 +603,7 @@ function openTheme(t){
   renderThemes(); renderPicks(); renderSheet();
   const tb = [...document.querySelectorAll('.theme')][THEMES.indexOf(t)]; if (tb) tb.scrollIntoView({inline:'center', block:'nearest'});
 }
-document.getElementById('homebtn').onclick = showHome;
+
 const catsEl = document.getElementById('cats');
 THEMES.forEach(t=>{
   const b = document.createElement('button'); b.className = 'cat';
@@ -625,17 +623,13 @@ function pickVoice(){
 if ('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 let soundOn = true;
 try { soundOn = localStorage.getItem('son-v1') !== 'off'; } catch(e) {}
-const sndBtn = document.getElementById('sndbtn'), sayBtn = document.getElementById('saybtn');
-function showSound(){
-  sndBtn.setAttribute('aria-pressed', soundOn);
-  sndBtn.setAttribute('aria-label', soundOn ? 'Couper le son' : 'Allumer le son');
-  sayBtn.classList.toggle('hide', !soundOn);
-}
-sndBtn.onclick = () => {
+const sayBtn = document.getElementById('saybtn');
+function showSound(){ sayBtn.classList.toggle('hide', !soundOn); }
+function toggleSound(){
   soundOn = !soundOn; showSound();
   try { localStorage.setItem('son-v1', soundOn ? 'on' : 'off'); } catch(e) {}
   if (!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel();
-};
+}
 showSound();
 function say(text){
   if (!soundOn || !text || !('speechSynthesis' in window)) return;
@@ -703,8 +697,11 @@ function showInstall(){
 }
 parentsBtn.onclick = () => openGate(showInstall);
 function showSettings(){
-  gateBox.innerHTML = `<h2 id="gate-title">Réglages</h2>
+  gateBox.innerHTML = `<h2 id="gate-title">Menu</h2>
     <div class="set-list">
+      <button class="set-item" data-k="home">⌂&nbsp; Accueil</button>
+      <button class="set-item" data-k="sound">${soundOn ? 'Son : activé (toucher pour couper)' : 'Son : coupé (toucher pour activer)'}</button>
+      <hr class="set-sep">
       ${isInstalled() ? '' : '<button class="set-item" data-k="install">Installer l\'appli sur ce téléphone</button>'}
       <button class="set-item" data-k="restart">Recommencer ce dessin</button>
       <button class="set-item" data-k="restartAll">Recommencer tous les dessins</button>
@@ -715,6 +712,8 @@ gateBox.addEventListener('click', async e => {
   const b = e.target.closest('.set-item'); if (!b) return;
   const k = b.dataset.k;
   if (k === 'install') return showInstall();
+  if (k === 'home'){ closeGate(); return showHome(); }
+  if (k === 'sound'){ toggleSound(); return showSettings(); }
   if (k === 'restart'){
     fills[current] = []; stickers[current] = []; history[current] = []; wasDone[current] = false;
     delete thumbs[current]; try { localStorage.setItem('miniatures-v1', JSON.stringify(thumbs)); } catch(e) {}
@@ -728,7 +727,7 @@ gateBox.addEventListener('click', async e => {
     await refresh(true); save(); hideBravo(); renderPicks(); closeGate();
   }
 });
-document.getElementById('setbtn').onclick = () => openGate(showSettings, 'Pour ouvrir les réglages');
+document.getElementById('menubtn').onclick = () => openGate(showSettings, 'Pour ouvrir le menu');
 </script>
 
 </body>

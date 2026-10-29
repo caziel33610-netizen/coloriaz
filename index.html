@@ -120,12 +120,17 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .panels > [hidden]{display:grid!important;visibility:hidden}
 .stickpanel{display:flex;flex-direction:column;gap:8px;justify-content:flex-end}
 .motifbar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:0;flex:1}
-.motifprev{width:86px;height:86px;border-radius:16px;background:var(--paper);display:grid;place-items:center;overflow:hidden;box-shadow:0 3px 0 var(--tray-edge)}
+.motifprev{width:52px;height:52px;border-radius:16px;background:var(--paper);display:grid;place-items:center;overflow:hidden;box-shadow:0 3px 0 var(--tray-edge)}
 .motifprev img{object-fit:contain;transition:width .15s,height .15s}
-.sizer{display:flex;gap:10px}
-.tray{background:var(--tray);border-radius:22px;padding:10px;display:grid;gap:10px;
+.sizer{display:flex;gap:8px}
+.sizer .tool{width:52px;height:44px}
+.motifbar{flex:0 0 auto!important}
+.tray{background:var(--tray);border-radius:22px;padding:10px;display:flex;gap:10px;align-items:stretch;
   box-shadow:inset 0 -4px 0 var(--tray-edge)}
-.colors{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;justify-items:center}
+.colors{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;justify-items:center;align-content:center}
+.stickers{grid-template-columns:repeat(8,1fr);gap:5px}
+.panels{flex:1}
+.tools.side{flex:0 0 auto;flex-direction:column;justify-content:center;gap:10px}
 .sticker-tile,.back-tile{background:var(--paper);box-shadow:0 2px 0 var(--tray-edge),inset 0 0 0 3px var(--ring);display:grid;place-items:center}
 .sticker-tile img{width:66%;height:66%;object-fit:contain;pointer-events:none}
 .st img{width:78%;height:78%;object-fit:contain;pointer-events:none}
@@ -142,7 +147,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .sw.white[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #d8cbb5,0 0 0 3px var(--fg)}
 .sw.white{box-shadow:inset 0 0 0 2px #d8cbb5,inset 0 -5px 0 rgb(0 0 0 / .08)}
 .tools{display:flex;gap:12px;justify-content:center;flex:1}
-.topbar .tool{height:44px;width:56px}
+.tools.side .tool{width:52px;height:52px}
 .tool{width:60px;height:52px;border-radius:16px;background:var(--paper);display:grid;place-items:center;
   box-shadow:0 4px 0 var(--tray-edge)}
 .tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tray-edge)}
@@ -215,18 +220,6 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 <div class="app" id="app" hidden>
   <div class="topbar">
     <button class="homebtn" id="menubtn" aria-label="Menu (parents)"><svg viewBox="0 0 32 32"><path d="M7 10h18M7 16h18M7 22h18"/></svg></button>
-  <div class="tools">
-        <button class="tool" id="undo" aria-label="Annuler">
-          <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
-        </button>
-        <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
-        <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
-          <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
-        </button>
-        <button class="tool" id="reset" aria-label="Tout effacer" hidden>
-          <svg viewBox="0 0 32 32"><path d="M6 9h20"/><path d="M12 9V6h8v3"/><path d="M8 9l2 18h12l2-18"/></svg>
-        </button>
-      </div>
     <button class="homebtn saybtn" id="saybtn" aria-label="Écouter le nom du dessin"><svg viewBox="0 0 32 32"><path d="M6 12h5l7-6v20l-7-6H6z"/><path d="M22 11c2 2.5 2 7.5 0 10"/><path d="M25.5 8c4 4.5 4 11.5 0 16"/></svg></button>
   </div>
   <nav class="themes" id="themes" aria-label="Choisir un thème" hidden></nav>
@@ -252,6 +245,18 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
         <div class="colors stickers" id="stickgrid"></div>
       </div>
     </div>
+    <div class="tools side">
+      <button class="tool" id="undo" aria-label="Annuler">
+        <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
+      </button>
+      <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
+      <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
+        <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
+      </button>
+      <button class="tool" id="reset" aria-label="Tout effacer" hidden>
+        <svg viewBox="0 0 32 32"><path d="M6 9h20"/><path d="M12 9V6h8v3"/><path d="M8 9l2 18h12l2-18"/></svg>
+      </button>
+    </div>
   </section>
 </div>
 
@@ -261,10 +266,9 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 
 
 
-const COLORS = ['#c81e3a','#ff4b4b','#ff6f61','#ff9a2e','#ffb000','#ffc48a','#ffb3d9','#ff7ac2',
-                '#ffd93b','#fff3a0','#c8f0a0','#9be03b','#2fbf5b','#1f7a4a','#6b8e23','#00a6a6',
-                '#b7e3ff','#36c8e8','#2f7bff','#1c3f9e','#b9a2ff','#8a5cf6','#7b2d8b','#e5007e',
-                '#fbd3b0','#e8c39e','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
+const COLORS = ['#c81e3a','#ff4b4b','#ff7ac2','#ffb3d9','#ff9a2e','#ffc48a','#ffd93b',
+                '#9be03b','#2fbf5b','#1f7a4a','#36c8e8','#2f7bff','#8a5cf6','#b9a2ff',
+                '#fbd3b0','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
 /* Motifs à coller : ils deviennent une partie du dessin et se colorient aussi */
 const MOTIFS = {"m1": "motifs/m1.png", "m4": "motifs/m4.png", "m3": "motifs/m3.png", "m14": "motifs/m14.png", "m15": "motifs/m15.png", "m6": "motifs/m6.png", "m16": "motifs/m16.png", "m17": "motifs/m17.png", "m7": "motifs/m7.png", "m8": "motifs/m8.png", "m9": "motifs/m9.png", "m12": "motifs/m12.png", "m13": "motifs/m13.png", "m18": "motifs/m18.png", "m20": "motifs/m20.png"};
 const STAMP = 150;

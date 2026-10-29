@@ -444,7 +444,33 @@ function starPath(g, r){
   for (let i=0;i<10;i++){ const a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r*.45 : r; g.lineTo(Math.cos(a)*rr, Math.sin(a)*rr); }
   g.closePath();
 }
+/* ---------- Musique de fin : la gamme au xylophone ---------- */
+let actx = null;
+function audio(){
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+  } catch(e) { actx = null; }
+  return actx;
+}
+addEventListener('pointerdown', audio, {once:true});
+function note(t, midi, dur, vol){
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = 'sine'; o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .003);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + .05);
+}
+function mallet(t, midi, vol=.3){ note(t, midi, .35, vol); note(t, midi + 24, .07, vol * .25); }
+function playScale(){
+  if (!audio()) return;
+  const t = actx.currentTime + .05;
+  [72,74,76,77,79,81,83,84].forEach((n,i) => mallet(t + i*.075, n));   // do ré mi fa sol la si do
+  [72,76,79,84].forEach(n => mallet(t + .7, n, .2)); mallet(t + .7, 60, .3);  // accord final
+}
+
 function celebrate(){
+  playScale();
   bravo.classList.add('show'); clearTimeout(bravoT); bravoT = setTimeout(hideBravo, 2600);
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const r = paper.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);

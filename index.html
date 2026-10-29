@@ -110,10 +110,11 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .back-tile span:nth-child(1){background:#ff4b4b}.back-tile span:nth-child(2){background:#ffd93b}
 .back-tile span:nth-child(3){background:#2fbf5b}.back-tile span:nth-child(4){background:#2f7bff}
 .st{width:100%;max-width:46px;aspect-ratio:1;border-radius:14px;background:var(--paper);font-size:1.6rem;display:grid;place-items:center;box-shadow:0 2px 0 var(--tray-edge);transition:transform .15s}
-.st[aria-pressed="true"]{transform:scale(1.15);outline:4px solid var(--fg);outline-offset:2px}
+.st[aria-pressed="true"]{box-shadow:0 0 0 3px var(--fg)}
 .sw{width:100%;max-width:44px;aspect-ratio:1;border-radius:50%;background:var(--c);
   box-shadow:inset 0 -5px 0 rgb(0 0 0 / .18),0 2px 0 rgb(0 0 0 / .15);transition:transform .15s}
-.sw[aria-pressed="true"]{transform:scale(1.18);outline:4px solid var(--fg);outline-offset:3px}
+.sw[aria-pressed="true"]{box-shadow:inset 0 -5px 0 rgb(0 0 0 / .18),0 0 0 3px var(--fg)}
+.sw.white[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #d8cbb5,0 0 0 3px var(--fg)}
 .sw.white{box-shadow:inset 0 0 0 2px #d8cbb5,inset 0 -5px 0 rgb(0 0 0 / .08)}
 .tools{display:flex;gap:12px;justify-content:center}
 .tool{width:60px;height:52px;border-radius:16px;background:var(--paper);display:grid;place-items:center;
@@ -278,6 +279,10 @@ function labelize(ink){
   for (let i=0;i<SIZE;i++){ outside.add(label[i]); outside.add(label[N-SIZE+i]); outside.add(label[i*SIZE]); outside.add(label[i*SIZE+SIZE-1]); }
   const zones = []; let inner = 0;
   for (let k=1;k<=n;k++) if (sizes[k] >= MIN_ZONE && !outside.has(k)){ zones.push(k); inner += sizes[k]; }
+  /* une zone qui fait moins de 3 % du dessin (yeux, reflets, petits trous) ne compte pas */
+  const big = zones.filter(k => sizes[k] >= inner*0.03);
+  inner = big.reduce((t,k)=>t+sizes[k],0);
+  zones.length = 0; zones.push(...big);
   return { label, zones, sizes, inner };
 }
 
@@ -410,7 +415,7 @@ const bravo = document.getElementById('bravo'); let bravoT;
 function hideBravo(){ bravo.classList.remove('show'); }
 /* Le dessin est « fini » quand presque toute sa surface est coloriée :
    les petites zones (yeux, reflets, détails) et le fond ne sont pas obligatoires. */
-const DONE_RATIO = 0.85;
+const DONE_RATIO = 0.75;
 const wasDone = {};
 function isDone(name){
   const st = state[name]; if (!st || !st.inner) return false;

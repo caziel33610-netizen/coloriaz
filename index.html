@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Coloriaz</title>
+<meta name="build" content="20261029174145">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -287,9 +288,10 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 
 
 
-const COLORS = ['#c81e3a','#ff4b4b','#ff7ac2','#ffb3d9','#ff9a2e','#ffc48a','#ffd93b',
-                '#9be03b','#2fbf5b','#1f7a4a','#36c8e8','#2f7bff','#8a5cf6','#b9a2ff',
-                '#fbd3b0','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
+const COLORS = ['#c81e3a','#ff4b4b','#ff6f61','#ff9a2e','#ffc48a','#ffd93b','#fff3a0',
+                '#c8f0a0','#9be03b','#2fbf5b','#1f7a4a','#00a6a6','#36c8e8','#2f7bff',
+                '#1c3f9e','#b9a2ff','#8a5cf6','#7b2d8b','#ff7ac2','#ffb3d9','#fbd3b0',
+                '#e8c39e','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
 /* Motifs à coller : ils deviennent une partie du dessin et se colorient aussi */
 const MOTIFS = {"m1": "motifs/m1.png", "m4": "motifs/m4.png", "m3": "motifs/m3.png", "m14": "motifs/m14.png", "m15": "motifs/m15.png", "m6": "motifs/m6.png", "m16": "motifs/m16.png", "m17": "motifs/m17.png", "m7": "motifs/m7.png", "m8": "motifs/m8.png", "m9": "motifs/m9.png", "m12": "motifs/m12.png", "m13": "motifs/m13.png", "m18": "motifs/m18.png", "m20": "motifs/m20.png"};
 const STAMP = 150;
@@ -733,6 +735,20 @@ function hideName(){ nameCard.hidden = true; trayEl.classList.remove('naming'); 
 nameCard.addEventListener('click', hideName);
 function announce(){ say(NAMES[current]); showName(NAMES[current]); }
 document.getElementById('saybtn').onclick = announce;
+
+/* ---------- Nouvelle version du site : rechargement automatique (les coloriages sont gardés) ---------- */
+const BUILD = document.querySelector('meta[name="build"]').content;
+async function checkUpdate(){
+  try {
+    const r = await fetch('version.txt?t=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) return;
+    const v = (await r.text()).trim();
+    if (v && v !== BUILD) location.reload();
+  } catch(e) {}
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
+setInterval(() => { if (!document.hidden && !homeEl.hidden) checkUpdate(); }, 5*60*1000);
+checkUpdate();
 
 /* ---------- Installer l'appli (espace parents) ---------- */
 let installPrompt = null;

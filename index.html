@@ -144,6 +144,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .gate-box{width:100%;max-width:360px;background:var(--paper);color:var(--ink);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px rgb(0 0 0 / .25)}
 .gate-box h2{margin:0;font-size:1.3rem;font-weight:800}
 .gate-box p{margin:0;font-size:1rem;line-height:1.4;font-weight:600}
+.gate-q::first-letter{text-transform:uppercase}
 .gate-q{font-size:1.15rem!important;font-weight:800!important;color:var(--ring)}
 .gate-ans{height:54px;border-radius:14px;background:#f3ecdf;display:grid;place-items:center;font-size:1.8rem;font-weight:800;letter-spacing:.1em;font-variant-numeric:tabular-nums}
 .gate-ans.bad{animation:shake .35s}
@@ -658,11 +659,11 @@ function closeGate(){ gate.hidden = true; }
 gate.addEventListener('click', e => { if (e.target === gate) closeGate(); });
 function openGate(next, why){
   gateNext = next || showInstall;
-  const a = 3 + Math.floor(Math.random()*7), b = 3 + Math.floor(Math.random()*7);
+  const a = 2 + Math.floor(Math.random()*2), b = 2 + Math.floor(Math.random()*8);   // tables de 2 et 3 seulement
   gateAnswer = a*b; typed = '';
   gateBox.innerHTML = `<h2 id="gate-title">Espace parents</h2>
-    <p>${why || 'Pour installer Coloriaz sur ce téléphone'}, répondez à cette question :</p>
-    <p class="gate-q">Combien font ${NOMBRES[a]} fois ${NOMBRES[b]} ?</p>
+    <p>Question pour les parents :</p>
+    <p class="gate-q">${NOMBRES[a]} fois ${NOMBRES[b]} ?</p>
     <div class="gate-ans" id="gate-ans" aria-live="polite">&nbsp;</div>
     <div class="keys">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join('')}
       <button data-k="del" aria-label="Effacer">←</button><button data-k="0">0</button><button data-k="ok" class="ok">OK</button></div>

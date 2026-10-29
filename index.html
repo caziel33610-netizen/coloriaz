@@ -137,6 +137,11 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .tool{width:60px;height:52px;border-radius:16px;background:var(--paper);display:grid;place-items:center;
   box-shadow:0 4px 0 var(--tray-edge)}
 .tool:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tray-edge)}
+.motiftool img{width:34px;height:34px;object-fit:contain;pointer-events:none}
+.motiftool .dots{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:28px}
+.motiftool .dots span{aspect-ratio:1;border-radius:50%}
+.motiftool .dots span:nth-child(1){background:#ff4b4b}.motiftool .dots span:nth-child(2){background:#ffd93b}
+.motiftool .dots span:nth-child(3){background:#2fbf5b}.motiftool .dots span:nth-child(4){background:#2f7bff}
 .tool svg{width:30px;height:30px;stroke:var(--ink);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .tool[aria-pressed="true"]{outline:4px solid var(--ring);outline-offset:2px}
 .tool.ask{background:var(--ring)}
@@ -218,6 +223,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
       <button class="tool" id="undo" aria-label="Annuler">
         <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
       </button>
+      <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
       <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
         <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
       </button>
@@ -234,9 +240,10 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 
 
 
-const COLORS = ['#ff4b4b','#c81e3a','#ff7ac2','#ffb3d9','#ff9a2e','#ffc48a','#ffd93b','#fff3a0',
-                '#9be03b','#2fbf5b','#1f7a4a','#36c8e8','#2f7bff','#1c3f9e','#b9a2ff','#8a5cf6',
-                '#a0673c','#6b4226','#fbd3b0','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
+const COLORS = ['#c81e3a','#ff4b4b','#ff6f61','#ff9a2e','#ffb000','#ffc48a','#ffb3d9','#ff7ac2',
+                '#ffd93b','#fff3a0','#c8f0a0','#9be03b','#2fbf5b','#1f7a4a','#6b8e23','#00a6a6',
+                '#b7e3ff','#36c8e8','#2f7bff','#1c3f9e','#b9a2ff','#8a5cf6','#7b2d8b','#e5007e',
+                '#fbd3b0','#e8c39e','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
 /* Motifs à coller : ils deviennent une partie du dessin et se colorient aussi */
 const MOTIFS = {"m1": "motifs/m1.png", "m4": "motifs/m4.png", "m3": "motifs/m3.png", "m14": "motifs/m14.png", "m15": "motifs/m15.png", "m6": "motifs/m6.png", "m16": "motifs/m16.png", "m17": "motifs/m17.png", "m7": "motifs/m7.png", "m8": "motifs/m8.png", "m9": "motifs/m9.png", "m12": "motifs/m12.png", "m13": "motifs/m13.png", "m18": "motifs/m18.png", "m20": "motifs/m20.png"};
 const STAMP = 150;
@@ -245,7 +252,7 @@ const MOTIF_SCALE = { m18: 0.55, m20: 1.6 };
 const sizeOf = id => Math.round(STAMP * (MOTIF_SCALE[id] || 1));
 
 let theme = THEMES[0], ORDER = theme.items, current = ORDER[0];
-let color = COLORS[6], eraser = false, motif = null;
+let color = '#ffd93b', eraser = false, motif = null;
 let fills = {}, stickers = {}, history = {};
 try { fills = JSON.parse(localStorage.getItem('coloriages-v5') || '{}') || {}; } catch(e) { fills = {}; }
 try { stickers = JSON.parse(localStorage.getItem('motifs-v1') || '{}') || {}; } catch(e) { stickers = {}; }
@@ -537,16 +544,12 @@ COLORS.forEach(c=>{
   colorsEl.appendChild(b);
 });
 const MOTIF_IDS = Object.keys(MOTIFS);
-const openSt = document.createElement('button');
-openSt.className = 'sw sticker-tile'; openSt.setAttribute('aria-label','motifs');
-openSt.innerHTML = `<img alt="" src="${MOTIFS[MOTIF_IDS[0]]}">`;
-openSt.onclick = () => showPanel('stickers');
-colorsEl.appendChild(openSt);
-const backBtn = document.createElement('button');
-backBtn.className = 'sw back-tile'; backBtn.setAttribute('aria-label','couleurs');
-backBtn.innerHTML = '<span></span><span></span><span></span><span></span>';
-backBtn.onclick = () => showPanel('colors');
-stickersEl.appendChild(backBtn);
+/* Bouton motifs, sur la même ligne que le bouton retour : il bascule entre couleurs et motifs */
+const openSt = document.getElementById('motifbtn');
+const MOTIF_ICON = `<img alt="" src="${MOTIFS[MOTIF_IDS[0]]}">`;
+const COLORS_ICON = '<span class="dots"><span></span><span></span><span></span><span></span></span>';
+openSt.innerHTML = MOTIF_ICON;
+openSt.onclick = () => showPanel(colorsEl.hidden ? 'colors' : 'stickers');
 MOTIF_IDS.forEach(id=>{
   const b = document.createElement('button');
   b.className = 'st'; b.dataset.m = id; b.setAttribute('aria-label','motif');
@@ -556,6 +559,8 @@ MOTIF_IDS.forEach(id=>{
 });
 function showPanel(which){
   colorsEl.hidden = which !== 'colors'; stickersEl.hidden = which !== 'stickers';
+  openSt.innerHTML = which === 'stickers' ? COLORS_ICON : MOTIF_ICON;
+  openSt.setAttribute('aria-label', which === 'stickers' ? 'revenir aux couleurs' : 'motifs');
   if (which === 'stickers' && !motif) motif = MOTIF_IDS[0];
   if (which === 'colors') motif = null;
   setEraser(false);

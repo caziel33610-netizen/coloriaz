@@ -110,6 +110,11 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 @keyframes wiggle{25%{transform:scale(1.12) rotate(-5deg)}75%{transform:scale(1.12) rotate(5deg)}}
 
 /* Boîte de crayons */
+.namecard{min-height:100%;display:grid;place-items:center;text-align:center;font-size:2.2rem;font-weight:800;line-height:1.1;color:var(--fg);padding:8px;animation:nameIn .35s ease}
+@keyframes nameIn{from{transform:scale(.8);opacity:0}}
+.tray.naming .colors,.tray.naming .tools{visibility:hidden}
+.tray.naming{position:relative}
+.tray.naming .namecard{position:absolute;inset:0}
 .tray{background:var(--tray);border-radius:22px;padding:10px;display:grid;gap:10px;
   box-shadow:inset 0 -4px 0 var(--tray-edge)}
 .colors{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;justify-items:center}
@@ -206,6 +211,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
     <div class="bravo" id="bravo" aria-live="polite">Bravo !</div>
   </main>
   <section class="tray" aria-label="Couleurs">
+    <div class="namecard" id="namecard" hidden aria-live="polite"></div>
     <div class="colors" id="colors"></div>
     <div class="colors stickers" id="stickers" hidden></div>
     <div class="tools" hidden>
@@ -362,7 +368,7 @@ function renderPicks(){
     b.className = 'pick'; b.setAttribute('aria-label', 'dessin '+(i+1));
     b.setAttribute('aria-pressed', name===current);
     b.innerHTML = `<img alt="" src="${thumbs[name] || IMAGES[name]}">`;
-    b.onclick = () => { current = name; renderPicks(); renderSheet(); say(NAMES[name]); };
+    b.onclick = () => { current = name; renderPicks(); renderSheet(); announce(); };
     nav.appendChild(b);
   });
 }
@@ -604,6 +610,7 @@ const homeEl = document.getElementById('home'), appEl = document.getElementById(
 function showHome(){ appEl.hidden = true; homeEl.hidden = false; }
 function openTheme(t){
   say((THEME_SAY[t.id] || t.label) + ' ! ' + (NAMES[t.items[0]] || ''));
+  setTimeout(() => showName(NAMES[t.items[0]]), 0);
   theme = t; ORDER = t.items; current = ORDER[0];
   homeEl.hidden = true; appEl.hidden = false;
   renderThemes(); renderPicks(); renderSheet();
@@ -647,7 +654,19 @@ function say(text){
     speechSynthesis.speak(u);
   } catch(e) {}
 }
-document.getElementById('saybtn').onclick = () => say(NAMES[current]);
+/* Le nom du dessin s'affiche à la place des couleurs pendant 4 secondes */
+const trayEl = document.querySelector('.tray'), nameCard = document.getElementById('namecard');
+let nameT;
+function showName(text){
+  if (!text) return;
+  nameCard.textContent = text.charAt(0).toUpperCase() + text.slice(1); nameCard.hidden = false; trayEl.classList.add('naming');
+  nameCard.style.animation = 'none'; void nameCard.offsetWidth; nameCard.style.animation = '';
+  clearTimeout(nameT); nameT = setTimeout(hideName, 4000);
+}
+function hideName(){ nameCard.hidden = true; trayEl.classList.remove('naming'); }
+nameCard.addEventListener('click', hideName);
+function announce(){ say(NAMES[current]); showName(NAMES[current]); }
+document.getElementById('saybtn').onclick = announce;
 
 /* ---------- Installer l'appli (espace parents) ---------- */
 let installPrompt = null;

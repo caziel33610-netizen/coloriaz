@@ -282,8 +282,11 @@ function labelize(ink){
   for (let i=0;i<SIZE;i++){ outside.add(label[i]); outside.add(label[N-SIZE+i]); outside.add(label[i*SIZE]); outside.add(label[i*SIZE+SIZE-1]); }
   const zones = []; let inner = 0;
   for (let k=1;k<=n;k++) if (sizes[k] >= MIN_ZONE && !outside.has(k)){ zones.push(k); inner += sizes[k]; }
-  /* une zone qui fait moins de 3 % du dessin (yeux, reflets, petits trous) ne compte pas */
-  const big = zones.filter(k => sizes[k] >= inner*0.03);
+  /* Seules les GRANDES zones sont obligatoires pour finir : assez grandes pour un petit doigt
+     (au moins 6 000 points, soit environ 1 % de la feuille) et au moins 2,5 % du dessin.
+     Les yeux, reflets, petits motifs et petits trous restent facultatifs. */
+  let big = zones.filter(k => sizes[k] >= 6000 && sizes[k] >= inner*0.025);
+  if (!big.length && zones.length) big = [zones.reduce((a,b)=> sizes[a] >= sizes[b] ? a : b)];
   inner = big.reduce((t,k)=>t+sizes[k],0);
   zones.length = 0; zones.push(...big);
   return { label, zones, sizes, inner };
@@ -422,9 +425,9 @@ const DONE_RATIO = 0.75;
 const wasDone = {};
 function isDone(name){
   const st = state[name]; if (!st || !st.inner) return false;
-  const map = regionColors(name); let colored = 0;
-  for (const k of st.zones) if (map[k] && map[k] !== '#ffffff') colored += st.sizes[k];
-  return colored / st.inner >= DONE_RATIO;
+  const map = regionColors(name);
+  /* toutes les grandes zones doivent être coloriées (le blanc ne compte pas) */
+  return st.zones.every(k => map[k] && map[k] !== '#ffffff');
 }
 function checkDone(){
   const done = isDone(current);
@@ -442,7 +445,6 @@ function starPath(g, r){
   g.closePath();
 }
 function celebrate(){
-  say('Bravo !');
   bravo.classList.add('show'); clearTimeout(bravoT); bravoT = setTimeout(hideBravo, 2600);
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const r = paper.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);

@@ -132,7 +132,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .colors{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;justify-items:center;align-content:center}
 .stickers{grid-template-columns:repeat(8,1fr);gap:5px}
 .panels{flex:1}
-.tools.side{flex:0 0 auto;flex-direction:column;justify-content:center;gap:10px}
+.tools.side{flex:0 0 auto;flex-direction:column;justify-content:center;gap:8px}
 .sticker-tile,.back-tile{background:var(--paper);box-shadow:0 2px 0 var(--tray-edge),inset 0 0 0 3px var(--ring);display:grid;place-items:center}
 .sticker-tile img{width:66%;height:66%;object-fit:contain;pointer-events:none}
 .st img{width:78%;height:78%;object-fit:contain;pointer-events:none}
@@ -160,7 +160,7 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
 .motiftool .dots span:nth-child(3){background:#2fbf5b}.motiftool .dots span:nth-child(4){background:#2f7bff}
 .tool:disabled{opacity:.35}
 .tool svg{width:30px;height:30px;stroke:var(--ink);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.tool[aria-pressed="true"]{outline:4px solid var(--ring);outline-offset:2px}
+.tool[aria-pressed="true"]{box-shadow:0 0 0 3px var(--fg)}
 .tool.ask{background:var(--ring)}
 .tool.ask svg{stroke:#fff}
 @media (max-width:380px){.colors{gap:6px}}
@@ -271,10 +271,11 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
       <button class="tool" id="undo" aria-label="Annuler">
         <svg viewBox="0 0 32 32"><path d="M11 9 5 15l6 6"/><path d="M5 15h14a7 7 0 0 1 0 14h-5"/></svg>
       </button>
-      <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
-      <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false" hidden>
+      <button class="tool" id="eraser" aria-label="Gomme" aria-pressed="false">
         <svg viewBox="0 0 32 32"><path d="M18 5 27 14 15 26H9l-4-4z"/><path d="M12 11l9 9"/><path d="M15 26h12"/></svg>
       </button>
+      <button class="tool motiftool" id="motifbtn" aria-label="motifs"></button>
+      
       <button class="tool" id="reset" aria-label="Tout effacer" hidden>
         <svg viewBox="0 0 32 32"><path d="M6 9h20"/><path d="M12 9V6h8v3"/><path d="M8 9l2 18h12l2-18"/></svg>
       </button>

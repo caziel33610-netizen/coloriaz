@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Coloriaz</title>
-<meta name="build" content="20261029174145">
+<meta name="build" content="20261030191312">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -283,8 +283,11 @@ button:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
   </section>
 </div>
 
-<script src="themes.js"></script>
+<script src="themes.js?v=20261030191312"></script>
 <script>
+/* numéro de version ajouté aux images : un dessin modifié est toujours rechargé */
+const VER = '?v=' + document.querySelector('meta[name="build"]').content;
+for (const k in IMAGES) IMAGES[k] += VER;
 /* Dessins fournis en image : coloriage « pot de peinture » */
 
 
@@ -295,6 +298,7 @@ const COLORS = ['#c81e3a','#ff4b4b','#ff6f61','#ff9a2e','#ffc48a','#ffd93b','#ff
                 '#e8c39e','#a0673c','#6b4226','#c9c9d2','#7a7a86','#2b2233','#ffffff'];
 /* Motifs à coller : ils deviennent une partie du dessin et se colorient aussi */
 const MOTIFS = {"m1": "motifs/m1.png", "m4": "motifs/m4.png", "m3": "motifs/m3.png", "m14": "motifs/m14.png", "m15": "motifs/m15.png", "m6": "motifs/m6.png", "m16": "motifs/m16.png", "m17": "motifs/m17.png", "m7": "motifs/m7.png", "m8": "motifs/m8.png", "m9": "motifs/m9.png", "m12": "motifs/m12.png", "m13": "motifs/m13.png", "m18": "motifs/m18.png", "m20": "motifs/m20.png"};
+for (const k in MOTIFS) MOTIFS[k] += VER;
 const STAMP = 150;
 /* taille propre à certains motifs (1 = normale) */
 const MOTIF_SCALE = { m18: 0.55, m20: 1.6 };
@@ -689,7 +693,7 @@ function openTheme(t){
 const catsEl = document.getElementById('cats');
 THEMES.forEach(t=>{
   const b = document.createElement('button'); b.className = 'cat';
-  b.innerHTML = `<span class="pic"><img alt="" src="covers/${t.id}.png"></span><b>${t.label}</b><small>${t.items.length} coloriages</small>`;
+  b.innerHTML = `<span class="pic"><img alt="" src="covers/${t.id}.png${VER}"></span><b>${t.label}</b><small>${t.items.length} coloriages</small>`;
   b.onclick = () => openTheme(t);
   catsEl.appendChild(b);
 });
@@ -738,7 +742,7 @@ function announce(){ say(NAMES[current]); showName(NAMES[current]); }
 document.getElementById('saybtn').onclick = announce;
 
 /* ---------- Nouvelle version du site : rechargement automatique (les coloriages sont gardés) ---------- */
-const BUILD = document.querySelector('meta[name="build"]').content;
+const BUILD = VER.slice(3);
 async function checkUpdate(){
   try {
     const r = await fetch('version.txt?t=' + Date.now(), {cache:'no-store'});
@@ -812,7 +816,7 @@ function showSettings(){
       <hr class="set-sep">
     </div>
     <div class="menucats">
-      ${THEMES.map((t,i) => `<button class="set-item mcat${t===theme ? ' cur' : ''}" data-k="theme" data-i="${i}"><span class="mpic"><img alt="" src="covers/${t.id}.png"></span><b>${t.label}</b></button>`).join('')}
+      ${THEMES.map((t,i) => `<button class="set-item mcat${t===theme ? ' cur' : ''}" data-k="theme" data-i="${i}"><span class="mpic"><img alt="" src="covers/${t.id}.png${VER}"></span><b>${t.label}</b></button>`).join('')}
     </div>
     <button class="gate-close" data-k="close">Fermer</button>`;
   gate.hidden = false;
